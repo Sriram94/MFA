@@ -18,7 +18,7 @@ import data_range
 from simulator import disease_model
 from util import *
 
-class MARL(object):
+class GATMF(object):
     def __init__(self,
                 MSA_name='Atlanta',
                 vaccine_day=0.01,
@@ -465,7 +465,7 @@ class MARL(object):
 
 
 if __name__ == '__main__':
-    train_platform=MARL()
+    train_platform=GATMF()
     # train_platform.test_simulation()
     # train_platform.test_network()
     train_platform.train()

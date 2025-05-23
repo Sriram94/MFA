@@ -221,7 +221,6 @@ class ActorNet(nn.Module):
         super(ActorNet, self).__init__()
         self.state_dim = state_dim 
         self.action_dim = action_dim 
-        self.meanfield_dim = meanfield_dim 
         self.h_dim = h_dim
         self.fc = nn.Sequential(nn.Linear(self.state_dim, self.h_dim),
                                 nn.ReLU6(),
@@ -317,8 +316,7 @@ class Agent():
     def select_action(self, state, meanfield):
         
         state = torch.from_numpy(state).float().unsqueeze(0)
-        meanfield = torch.from_numpy(meanfield).float().unsqueeze(0)
-        action_probs = self.eval_anet(state, meanfield)
+        action_probs = self.eval_anet(state)
         action_probs = action_probs.detach().squeeze()
         calc_action = torch.multinomial(action_probs, 1)
         calc_action = calc_action.numpy()[0]
@@ -335,9 +333,7 @@ class Agent():
         s = np.array([t.s for t in transitions]) 
 
         s = torch.tensor(s, dtype=torch.float)
-        meanfield = np.array([t.meanfield for t in transitions]) 
 
-        meanfield = torch.tensor(meanfield, dtype=torch.float)
 
         a = np.array([t.a for t in transitions]) 
         a = torch.tensor(a, dtype=torch.float)
@@ -353,11 +349,8 @@ class Agent():
 
         aothers = [t.aothers for t in transitions]
         s_others = [t.s_others for t in transitions]
-        meanfield_others = [t.meanfield_others for t in transitions]
 
-        merged_list = [(sothers[i], aothers[i], meanfield[i]) for i in range(0, len(sothers))]
 
-        merged_list2 = [(s_others[i], aothers[i], meanfield[i]) for i in range(0, len(s_others))]
 
         with torch.no_grad():
             action_probs = self.target_anet(s_)
@@ -416,12 +409,12 @@ class Agent():
     #        network = self.cast(network)
     #        network.eval()
 
-    def save_param(self, path='./param/wmfrl.pkl'):
+    def save_param(self, path='./param/ipc.pkl'):
         print("Saving")
         save_dict = {'networks': [network.state_dict() for network in self.networks]}
         torch.save(save_dict, path)
 
-    def load_param(self, path='./param/wmfrl.pkl'):
+    def load_param(self, path='./param/ipc.pkl'):
         print("loading")
         save_dict = torch.load(path)
         for network, params in zip(self.networks, save_dict['networks']):

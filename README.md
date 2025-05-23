@@ -30,7 +30,7 @@ Code base for the NeurIPS 2025 submission (Submission Number 18718): Revisiting 
 Atleast 
 
 - `python==3.8`
-- `gym==0.9.2`
+- `gym==0.20.0`
 - `matplotlib`
 
 

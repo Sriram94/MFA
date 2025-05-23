@@ -29,10 +29,29 @@ Code base for the NeurIPS 2025 submission (Submission Number 18718): Revisiting 
 
 Atleast 
 
-- `python==3.7.11`
+- `python==3.8`
 - `gym==0.9.2`
 - `matplotlib`
 
+
+#### Install MARLlib 
+
+You can get more help from [MARLlib](https://marllib.readthedocs.io/en/latest/handbook/installation.html)
+
+```shell
+conda create -n marllib python=3.8
+conda activate marllib
+git clone https://github.com/Replicable-MARL/MARLlib.git
+cd MARLlib
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# we recommend the gym version between 0.20.0~0.22.0.
+pip install gym>=0.20.0,<0.22.0
+
+# add patch files to MARLlib
+python patch/add_patch.py -y
+```
 
 #### Compile MAgent platform and run
 
@@ -44,6 +63,7 @@ Before running Battle Game environment, you need to compile it. You can get more
 cd examples/battle_model
 ./build.sh
 ```
+
 
 **Steps for training models under Battle Game settings**
 
@@ -126,7 +146,7 @@ bash train.sh
 python plot.py
 
 # local evaluation
-cd monobeast/my-submission
+cd monobeast/submission
 python eval.py
 ```
 

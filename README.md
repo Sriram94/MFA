@@ -1,9 +1,7 @@
 # Revisiting Neighbourhoods in Mean Field Reinforcement Learning
 
-Code base for the ICML 2025 submission (Submission Number 14387): Revisiting Neighbourhoods in Mean Field Reinforcement Learning
+Code base for the NeurIPS 2025 submission (Submission Number 18718): Revisiting Neighbourhoods in Mean Field Reinforcement Learning
 
-Note: This is a restricted version due to file size, licensing, and anonymity considerations. Full data and code will be
-open-sourced with the paper.
  
 ## Code structure
 
@@ -100,6 +98,8 @@ cd examples/battle_model
     python3 train_battle.py --help
     ```
 
+Similarly you can run the experiments for the Combined Arms and Tiger environments. 
+
 
 
 
@@ -148,8 +148,8 @@ cd <path/to/SMARTS>
 # Install the system requirements. You may use the `-y` option to enable automatic assumption of "yes" to all prompts to avoid timeout from waiting for user input. 
 bash utils/setup/install_deps.sh
 
-# Setup virtual environment. Presently at least Python 3.7 and higher is officially supported.
-python3.7 -m venv .venv
+# Setup virtual environment. Presently at least Python 3.8 and higher is officially supported.
+python3.8 -m venv .venv
 
 # Enter virtual environment to install dependencies.
 source .venv/bin/activate
@@ -175,10 +175,15 @@ To run the default example, firstly build the scenario `scenarios/sumo/loop`.
 scl scenario build --clean scenarios/sumo/loop
 ```
 
-Then, run a single-agent SMARTS simulation with Envision display and `loop` scenario.
+The code for training and testing uses the examples/multi\_agent.py file. Different scenarios from the scenarios folder (based on sumo) is used for training. Different agents are build from each MFA and baseline algorithms in the multi\_agent.py file. 
+
 ```bash 
-scl run --envision examples/single_agent.py scenarios/sumo/loop 
+cd <path>/SMARTS
+scl run --envision examples/multi_agent.py scenarios/sumo/loop
 ```
+
+
+
 
 The `--envision` flag runs the Envision server which displays the simulation visualization. See [./envision/README.md](./envision/README.md) for more information on Envision, SMARTS's front-end visualization tool.
 
@@ -192,8 +197,28 @@ scl run --envision <examples/path> <scenarios/path>
 
 
 
+### COVID-19 Vaccination task environments
+
+Please download the required data (~10GB) from this [link](https://drive.google.com/drive/folders/1-68jPOd6NXVyiC1PWbo-9wrqiktOi4GT?usp=sharing) and substitute this in the data folder. All other libraries required for this experiment should already be installed when installing the libraries for the previous environments.  
+
+The simulator for this experiment can be found in COVID19task/code/simulator. 
 
 
 
 
-Now you can just run the respective files mentioned in the above section to run our code.
+
+## Code Citations
+
+We would like to cite [MAgent](https://github.com/geek-ai/MAgent) for code providing the environments used in the MAgent experiments. 
+
+We would also like to cite [SMARTS](https://github.com/huawei-noah/SMARTS) for code providing the environments used in the SMARTS experiments. 
+
+We would also like to cite [Neural MMO](https://github.com/neuralmmo) for code providing the environments used in the Neural MMO experiments. 
+
+We would also like to cite [MARLlib](https://marllib.readthedocs.io/en/latest/) for implementations of several baselines used in the paper. 
+
+We would also like to cite [GAT-MF](https://github.com/tsinghua-fib-lab/Large-Scale-MARL-GATMF) for implementations of GAT-MF and the associated COVID-19 vaccination task.  
+
+
+
+

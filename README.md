@@ -166,7 +166,7 @@ To run the default example, firstly build the scenario `scenarios/sumo/loop`.
 scl scenario build --clean scenarios/sumo/loop
 ```
 
-The code for training and testing uses the `examples/multi\_agent.py` file. Different scenarios from the scenarios folder (based on sumo) is used for training. Different agents are build from each MFA and baseline algorithms in the multi\_agent.py file. 
+The code for training and testing uses the `examples/multi_agent.py` file. Different scenarios from the scenarios folder (based on sumo) is used for training. Different agents are build from each MFA and baseline algorithms in the multi\_agent.py file. 
 
 Use the appropriate algorithm from the Algorithms folder in the multi\_agent.py file and then you are ready for training.
 
@@ -195,7 +195,7 @@ scl run --envision <examples/path> <scenarios/path>
 
 Please download the required data (~10GB) from this [link](https://drive.google.com/drive/folders/1-68jPOd6NXVyiC1PWbo-9wrqiktOi4GT?usp=sharing) and substitute this in the data folder. All other libraries required for this experiment should already be installed when installing the libraries for the previous environments.  
 
-The simulator for this experiment can be found in COVID19task/code/simulator. 
+The simulator for this experiment can be found in `COVID19task/code/simulator`. 
 
 For training and evaluation use the following command: 
 

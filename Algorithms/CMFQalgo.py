@@ -31,10 +31,9 @@ def init_weights(m):
 
 
 
-class AttentionCritic(nn.Module): 
-    def __init__(self, state_dim, action_dim, n_agents, batch_size, hidden_dim=200, norm_in=True, attend_heads=4):
-        super(AttentionCritic, self).__init__()
-        assert (hidden_dim % attend_heads) == 0
+class CausalCritic(nn.Module): 
+    def __init__(self, state_dim, action_dim, n_agents, batch_size, hidden_dim=200, norm_in=True):
+        super(CausalCritic, self).__init__()
         
         idim = state_dim + action_dim
 	meanfielddim = action_dim
@@ -46,7 +45,6 @@ class AttentionCritic(nn.Module):
         self.action_dim = action_dim
         self.nagents = n_agents
         
-        self.attend_heads = attend_heads
 
         self.critic_encoders = nn.ModuleList()
         
@@ -77,16 +75,15 @@ class AttentionCritic(nn.Module):
 
 
 
-        attend_dim = hidden_dim // attend_heads
+        causal_dim = hidden_dim
         self.key_extractors = nn.ModuleList()
         self.selector_extractors = nn.ModuleList()
         self.value_extractors = nn.ModuleList()
-        for i in range(attend_heads):
-            self.key_extractors.append(nn.Linear(hidden_dim, attend_dim, bias=False))
-            self.selector_extractors.append(nn.Linear(hidden_dim, attend_dim, bias=False))
-            self.value_extractors.append(nn.Sequential(nn.Linear(hidden_dim,
-                                                                attend_dim),
-                                                       nn.LeakyReLU()))
+    	self.key_extractors.append(nn.Linear(hidden_dim, causal_dim, bias=False))
+    	self.selector_extractors.append(nn.Linear(hidden_dim, causal_dim, bias=False))
+    	self.value_extractors.append(nn.Sequential(nn.Linear(hidden_dim,
+							causal_dim),
+					       nn.LeakyReLU()))
 
         self.shared_modules = [self.key_extractors, self.selector_extractors,
                                self.value_extractors, self.critic_encoders]
@@ -107,7 +104,7 @@ class AttentionCritic(nn.Module):
             p.grad.data.mul_(1. / self.nagents)
 
     def forward(self, inps, state_agent, action_agent, meanfield_agent, return_q=True, return_all_q=False,
-                regularize=False, return_attend=False, logger=None, niter=0):
+                regularize=False, return_causal=False, logger=None, niter=0):
         """
         Inputs:
             inps (list of PyTorch Matrices): Inputs to each agents' encoder
@@ -117,7 +114,7 @@ class AttentionCritic(nn.Module):
             return_all_q (bool): return Q-value for all actions
             regularize (bool): returns values to add to loss function for
                                regularization
-            return_attend (bool): return attention weights per agent
+            return_causal (bool): return attention weights per agent
             logger (TensorboardX SummaryWriter): If passed in, important values
                                                  are logged
         """
@@ -162,27 +159,27 @@ class AttentionCritic(nn.Module):
                               for sel_ext in self.selector_extractors]
 
         other_all_values = [[] for _ in range(len(agents))]
-        all_attend_logits = [[] for _ in range(len(agents))]
-        all_attend_probs = [[] for _ in range(len(agents))]
+        all_causal_logits = [[] for _ in range(len(agents))]
+        all_causal_probs = [[] for _ in range(len(agents))]
         for curr_head_keys, curr_head_values, curr_head_selectors in zip(
                 all_head_keys, all_head_values, all_head_selectors):
             for i, a_i, selector in zip(range(len(agents)), agents, curr_head_selectors):
                 keys = [k for j, k in enumerate(curr_head_keys) if j != a_i]
                 values = [v for j, v in enumerate(curr_head_values) if j != a_i]
-                attend_logits = torch.matmul(selector.view(selector.shape[0], 1, -1),
+                causal_logits = torch.matmul(selector.view(selector.shape[0], 1, -1),
                                              torch.stack(keys).permute(1, 2, 0))
-                scaled_attend_logits = attend_logits / np.sqrt(keys[0].shape[1])
-                attend_weights = F.softmax(scaled_attend_logits, dim=2)
+                scaled_causal_logits = causal_logits / np.sqrt(keys[0].shape[1])
+                causal_weights = F.softmax(scaled_causal_logits, dim=2)
                 other_values = (torch.stack(values).permute(1, 2, 0) *
-                                attend_weights).sum(dim=2)
+                                causal_weights).sum(dim=2)
                 other_all_values[i].append(other_values)
-                all_attend_logits[i].append(attend_logits)
-                all_attend_probs[i].append(attend_weights)
+                all_causal_logits[i].append(causal_logits)
+                all_causal_probs[i].append(causal_weights)
         
         all_rets = []
         for i, a_i in enumerate(agents):
             head_entropies = [(-((probs + 1e-8).log() * probs).squeeze().sum(1)
-                               .mean()) for probs in all_attend_probs[i]]
+                               .mean()) for probs in all_causal_probs[i]]
             agent_rets = []
             critic_in = torch.cat((s_encodings[i], *other_all_values[i]), dim=1)
             all_q = self.critics(critic_in)
@@ -193,12 +190,12 @@ class AttentionCritic(nn.Module):
             if return_all_q:
                 agent_rets.append(all_q)
             if regularize:
-                attend_mag_reg = 1e-3 * sum((logit**2).mean() for logit in
-                                            all_attend_logits[i])
-                regs = (attend_mag_reg,)
+                causal_mag_reg = 1e-3 * sum((logit**2).mean() for logit in
+                                            all_causal_logits[i])
+                regs = (causal_mag_reg,)
                 agent_rets.append(regs)
-            if return_attend:
-                agent_rets.append(np.array(all_attend_probs[i]))
+            if return_causal:
+                agent_rets.append(np.array(all_causal_probs[i]))
             if logger is not None:
                 logger.add_scalars('agent%i/attention' % a_i,
                                    dict(('head%i_entropy' % h_i, ent) for h_i, ent
@@ -302,7 +299,7 @@ class Agent():
         self.n_agents = n_agents
 
         self.h_dim = h_dim
-        self.eval_cnet, self.target_cnet = AttentionCritic(self.state_dim, self.meanfielddim, self.action_dim, self.n_agents, batch_size, hidden_dim=self.h_dim).float(), AttentionCritic(self.state_dim, self.action_dim, self.n_agents, batch_size, hidden_dim=self.h_dim).float()
+        self.eval_cnet, self.target_cnet = CausalCritic(self.state_dim, self.meanfielddim, self.action_dim, self.n_agents, batch_size, hidden_dim=self.h_dim).float(), CausalCritic(self.state_dim, self.action_dim, self.n_agents, batch_size, hidden_dim=self.h_dim).float()
         self.eval_anet, self.target_anet = ActorNet(self.state_dim, self.meanfielddim, self.action_dim, self.h_dim).float(), ActorNet(self.state_dim, self.meanfielddim, self.action_dim, self.h_dim).float()
         self.memory = Memory(memory_capacity, batch_size)
         self.gamma = gamma

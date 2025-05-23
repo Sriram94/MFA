@@ -130,25 +130,26 @@ Similarly you can run the experiments for the Combined Arms and Tiger environmen
 
 ## Install
 ```bash
-pip install git+http://gitlab.aicrowd.com/henryz/ijcai2022nmmo.git
-pip install -r requirements.txt
+conda create -n nmmo python==3.9
+conda activate nmmo
+cd ./NeuralMMOimplementation
+apt install git-lfs
+cd ./NeuralMMOenvironment
+make install
+cd ./NeuralMMOimplementation
+pip install -r requirements_tool.txt
 ```
 
 
-## Train and evaluation
+Use the appropriate algorithm from the Algorithms folder in submission/submission.py and then you are ready for training. 
+
+## Train and Evaluate
 ```bash
-cd monobeast/training
-
-# train
-bash train.sh
-
-# plot
-python plot.py
-
-# local evaluation
-cd monobeast/submission
-python eval.py
+cd ./NeuralMMOimplementation
+python tool.py
 ```
+
+
 
 
 
@@ -195,7 +196,9 @@ To run the default example, firstly build the scenario `scenarios/sumo/loop`.
 scl scenario build --clean scenarios/sumo/loop
 ```
 
-The code for training and testing uses the examples/multi\_agent.py file. Different scenarios from the scenarios folder (based on sumo) is used for training. Different agents are build from each MFA and baseline algorithms in the multi\_agent.py file. 
+The code for training and testing uses the `examples/multi\_agent.py` file. Different scenarios from the scenarios folder (based on sumo) is used for training. Different agents are build from each MFA and baseline algorithms in the multi\_agent.py file. 
+
+Use the appropriate algorithm from the Algorithms folder in the multi\_agent.py file and then you are ready for training.
 
 ```bash 
 cd <path>/SMARTS
@@ -205,7 +208,8 @@ scl run --envision examples/multi_agent.py scenarios/sumo/loop
 
 
 
-The `--envision` flag runs the Envision server which displays the simulation visualization. See [./envision/README.md](./envision/README.md) for more information on Envision, SMARTS's front-end visualization tool.
+The `--envision` flag runs the Envision server which displays the simulation visualization. 
+
 
 After executing the above command, visit http://localhost:8081/ to view the experiment.
 
@@ -223,6 +227,13 @@ Please download the required data (~10GB) from this [link](https://drive.google.
 
 The simulator for this experiment can be found in COVID19task/code/simulator. 
 
+For training and evaluation use the following command: 
+
+```bash
+python code/train.py
+```
+
+To run various algorithms, replace the MARL class in the train.py file with the appropriate algorithm from the Algorithms folder. 
 
 
 

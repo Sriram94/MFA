@@ -31,9 +31,9 @@ def init_weights(m):
 
 
 
-class AttentionCritic(nn.Module): 
+class WMFRL(nn.Module): 
     def __init__(self, state_dim, action_dim, n_agents, batch_size, hidden_dim=200, norm_in=True, attend_heads=4):
-        super(AttentionCritic, self).__init__()
+        super(WMFRL, self).__init__()
         assert (hidden_dim % attend_heads) == 0
         
         idim = state_dim + action_dim
@@ -302,7 +302,7 @@ class Agent():
         self.n_agents = n_agents
 
         self.h_dim = h_dim
-        self.eval_cnet, self.target_cnet = AttentionCritic(self.state_dim, self.meanfielddim, self.action_dim, self.n_agents, batch_size, hidden_dim=self.h_dim).float(), AttentionCritic(self.state_dim, self.action_dim, self.n_agents, batch_size, hidden_dim=self.h_dim).float()
+        self.eval_cnet, self.target_cnet = WMFRL(self.state_dim, self.meanfielddim, self.action_dim, self.n_agents, batch_size, hidden_dim=self.h_dim).float(), WMFRL(self.state_dim, self.action_dim, self.n_agents, batch_size, hidden_dim=self.h_dim).float()
         self.eval_anet, self.target_anet = ActorNet(self.state_dim, self.meanfielddim, self.action_dim, self.h_dim).float(), ActorNet(self.state_dim, self.meanfielddim, self.action_dim, self.h_dim).float()
         self.memory = Memory(memory_capacity, batch_size)
         self.gamma = gamma

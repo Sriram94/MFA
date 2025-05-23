@@ -1,6 +1,6 @@
 # Revisiting Neighbourhoods in Mean Field Reinforcement Learning
 
-Code base for the NeurIPS 2025 submission (Submission Number 18718): Revisiting Neighbourhoods in Mean Field Reinforcement Learning
+Code base for the NeurIPS 2025 submission (Submission Number 18718): Revisiting Neighbourhoods in Mean Field Reinforcement Learning. 
 
  
 ## Code structure
@@ -36,7 +36,7 @@ Atleast
 
 #### Install MARLlib 
 
-You can get more help from [MARLlib](https://marllib.readthedocs.io/en/latest/handbook/installation.html)
+You can get more help from [MARLlib](https://marllib.readthedocs.io/en/latest/handbook/installation.html).
 
 ```shell
 conda create -n marllib python=3.8
@@ -55,7 +55,7 @@ python patch/add_patch.py -y
 
 #### Compile MAgent platform and run
 
-Before running Battle Game environment, you need to compile it. You can get more helps from: [MAgent](https://github.com/geek-ai/MAgent)
+Before running Battle Game environment, you need to compile it. You can get more helps from: [MAgent](https://github.com/geek-ai/MAgent).
 
 **Steps for compiling**
 
@@ -166,9 +166,9 @@ To run the default example, firstly build the scenario `scenarios/sumo/loop`.
 scl scenario build --clean scenarios/sumo/loop
 ```
 
-The code for training and testing uses the `examples/multi_agent.py` file. Different scenarios from the scenarios folder (based on sumo) is used for training. Different agents are build from each MFA and baseline algorithms in the multi\_agent.py file. 
+The code for training and testing uses the `examples/multi_agent.py` file. Different scenarios from the scenarios folder (based on sumo) is used for training. Different agents are build from each MFA and baseline algorithms in the `multi_agent.py` file. 
 
-Use the appropriate algorithm from the Algorithms folder in the multi\_agent.py file and then you are ready for training.
+Use the appropriate algorithm from the Algorithms folder in the `multi_agent.py` file and then you are ready for training.
 
 ```bash 
 cd <path>/SMARTS
@@ -203,7 +203,7 @@ For training and evaluation use the following command:
 python code/train.py
 ```
 
-To run various algorithms, replace the MARL class in the train.py file with the appropriate algorithm from the Algorithms folder. 
+To run various algorithms, replace the MARL class in the `train.py` file with the appropriate algorithm from the Algorithms folder. 
 
 
 

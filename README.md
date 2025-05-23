@@ -6,11 +6,15 @@ Code base for the NeurIPS 2025 submission (Submission Number 18718): Revisiting 
 ## Code structure
 
 
+- See folder Algorithms for all algorithmic implementations. 
+
 - See folder MAgent for MAgent environment experiments.
 
 - See folder Neural MMO for Neural MMO environment experiments.
 
 - See folder SMARTS for SMARTS environment experiments.
+
+- See folder COVID19task for experiments on the COVID19 domain.
 
 
 
@@ -20,10 +24,6 @@ Code base for the NeurIPS 2025 submission (Submission Number 18718): Revisiting 
 
 
 ### MAgent Environments 
-
-
-
-
 
 ##### Requirements
 
